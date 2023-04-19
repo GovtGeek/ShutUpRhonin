@@ -1,14 +1,12 @@
-local frame = CreateFrame("Frame", "ShutUpRhoninFrame")
-frame:RegisterEvent("ZONE_CHANGED")
-frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-function frame:OnEvent(event)
-    if event == "ZONE_CHANGED" or event == "ZONE_CHANGED_NEW_AREA" then
-        cvar_dialog = C_CVar.GetCVar("Sound_EnableDialog")
-        if GetZoneText() == "Dalaran" then
-            dialog_result = C_CVar.SetCVar("Sound_EnableDialog", 0)
-        else
-            dialog_result = C_CVar.SetCVar("Sound_EnableDialog", 1)
+local function OnEvent(self, event, isLogin, isReload)
+	if isLogin or isReload then
+        local RhoninEvent = { 559130, 559131, 559132, 559133, 559134, 559135, 559136, 559137, 559138 }
+        for _, yell in pairs(RhoninEvent) do
+            MuteSoundFile(yell)
         end
-    end
-end;
-frame:SetScript("OnEvent", frame.OnEvent);
+	end
+end
+
+local f = CreateFrame("Frame")
+f:RegisterEvent("PLAYER_ENTERING_WORLD")
+f:SetScript("OnEvent", OnEvent)
