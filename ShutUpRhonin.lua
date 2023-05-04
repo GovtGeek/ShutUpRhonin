@@ -1,9 +1,13 @@
+local IsRhonin = {
+    ["Rhonin"] = true, -- enUS, deDE, esES, frFR, itIT, ptBR
+    ["Ронин"] = true, -- ruRU
+    ["로닌"] = true, -- koKR
+    ["罗宁"] = true, -- zhCN
+}
+
 local function RhoninFilter(self, event, msg, author, ...)
-    local lang, channel, author2, flags, zonechannel, channelid, channelbase, langid, lineid, guid = ...
     local zone = C_Map.GetBestMapForUnit("player")
-    local _, _, _, _, _, npcid = strsplit("-", guid or "")
-    npcid = tonumber(npcid)
-    if npcid == 16128 and zone == 125 then -- language independent check
+    if zone == 125 and IsRhonin[author] then -- we're in Dalaran and Rhonin is yelling
         return true -- filter it
     else
         return false, msg, author, ... -- let it pass
@@ -16,7 +20,7 @@ local function OnEvent(self, event, isLogin, isReload)
         for _, yell in pairs(RhoninEvent) do
             MuteSoundFile(yell)
         end
-        ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", RhoninFilter)
+        ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", RhoninFilter)
 	end
 end
 
