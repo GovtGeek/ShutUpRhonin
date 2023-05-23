@@ -1,5 +1,11 @@
 ## Interface: 30401
 ## Title: ShutUp Rhonin
-## Notes: Silences Rhonin's Algalon RP in Dalaran (sound + yell)
+## Notes: Silences Rhonin's Algalon RP in Dalaran (sound + text)
 ## Version: 3.0.4.1.3.1
+## SavedVariables: ShutUpRhoninSettings
+
+ShutUpRhoninStrings.lua
+ShutUpRhoninStrings_cn.lua
+ShutUpRhoninStrings_ko.lua
+ShutUpRhoninStrings_ru.lua
 ShutUpRhonin.lua
