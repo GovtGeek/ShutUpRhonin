@@ -27,15 +27,25 @@ end
 -- The interface options panel
 function ShutUpRhonin:CreateOptionsFrame()
 	if not self.OptionsPanel then
-		self.OptionsPanel = CreateFrame("Frame", "ShutUpRhoninOptionsFrame")
+		local panel = CreateFrame("Frame", "ShutUpRhoninOptionsFrame", nil, BackdropTemplateMixin and "BackdropTemplate")
+		self.OptionsPanel = panel
 		self.OptionsPanel.name = ShutUpRhoninTitle
+
+		-- Title of our options panel
+		local text = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLargeLeftTop")
+		text:SetSize(290, 0)
+		text:SetJustifyV("MIDDLE")
+		local _, fontHeight = text:GetFont()
+		fontHeight = math.floor(fontHeight)
+		text:SetPoint("TOPLEFT", 16, -fontHeight)
+		text:SetText(ShutUpRhoninTitle)
 
 		-- Filter text yell checkbox
 		cbFilterTextYell = CreateFrame("CheckButton", nil, self.OptionsPanel, "InterfaceOptionsCheckButtonTemplate")
-		cbFilterTextYell:SetPoint("TOPLEFT", 20, -20)
-		cbFilterTextYell.Text:SetText("Filter text yell")
+		cbFilterTextYell:SetPoint("TOPLEFT", text, 0, -fontHeight)
+		cbFilterTextYell.Text:SetText(sFilterTextYell)
 		cbFilterTextYell:HookScript("OnClick", function(_, btn, down)
-			self.options.FilterTextYell = cbFilterTextYell:GetChecked()
+			ShutUpRhonin.options.FilterTextYell = cbFilterTextYell:GetChecked()
 		end)
 		self.OptionsPanel.cbFilterTextYell = cbFilterTextYell
 	end
@@ -51,17 +61,22 @@ end
 
 function ShutUpRhonin:VariablesLoaded()
 	ShutUpRhonin.options = ShutUpRhoninSettings.options or defaultOptions
+	ShutUpRhonin:InitializeOptions()
 end
 
 function ShutUpRhonin:OnEvent(event, addonName, isLogin, isReload)
-	if addonName ~= ShutUpRhonin.addonName then return end
-	if event == "ADDON_LOADED" then
+	if event == "VARIABLES_LOADED" then
+		-- Load our variables
+		ShutUpRhonin:VariablesLoaded()
+	end
+	if event == "ADDON_LOADED" and addonName == ShutUpRhonin.addonName then
 		ShutUpRhonin:CreateOptionsFrame()
 		ShutUpRhonin:InitializeOptions()
 		return
-	elseif event == "VARIABLES_LOADED" then
+	else
 	end
 	if isLogin or isReload then
+		--print("Muting Rhonin")
         local RhoninEvent = { 559126, 559127, 559128, 559129, 559130, 559131, 559132, 559133, }
         for _, yell in pairs(RhoninEvent) do
             MuteSoundFile(yell)
