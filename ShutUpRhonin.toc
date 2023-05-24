@@ -5,7 +5,4 @@
 ## SavedVariables: ShutUpRhoninSettings
 
 ShutUpRhoninStrings.lua
-ShutUpRhoninStrings_cn.lua
-ShutUpRhoninStrings_ko.lua
-ShutUpRhoninStrings_ru.lua
 ShutUpRhonin.lua

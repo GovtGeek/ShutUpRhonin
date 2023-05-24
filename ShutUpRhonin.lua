@@ -1,6 +1,5 @@
-_, ShutUpRhonin = ...
-ShutUpRhonin.addonName = "ShutUpRhonin"
-
+local addonName, ShutUpRhonin = ...
+local L = ShutUpRhonin.L -- populated in ShutUpRhoninStrings.lua
 
 local defaultOptions = {
 	FilterTextYell = true
@@ -16,12 +15,15 @@ ShutUpRhonin.options = ShutUpRhoninSettings.options or defaultOptions
 local ShutUpRhoninFrame = CreateFrame("Frame", "ShutUpRhoninFrame")
 
 local function RhoninFilter(self, event, msg, author, ...)
-    local zone = C_Map.GetBestMapForUnit("player")
-    if zone == 125 and author == sRhonin and ShutUpRhonin.options.FilterTextYell then -- we're in Dalaran and Rhonin is yelling
-        return true -- filter it
-    else
-        return false, msg, author, ... -- let it pass
-    end
+	if ShutUpRhonin.options.FilterTextYell then
+		local zone = C_Map.GetBestMapForUnit("player")
+    	if zone == 125 and author == L["Rhonin"] then -- we're in Dalaran and Rhonin is yelling
+        	return true -- filter it
+        else
+        	return false, msg, author, ... -- let it pass
+    	end
+	end
+	return false, msg, author, ... -- let it pass
 end
 
 -- The interface options panel
@@ -29,7 +31,7 @@ function ShutUpRhonin:CreateOptionsFrame()
 	if not self.OptionsPanel then
 		local panel = CreateFrame("Frame", "ShutUpRhoninOptionsFrame", nil, BackdropTemplateMixin and "BackdropTemplate")
 		self.OptionsPanel = panel
-		self.OptionsPanel.name = ShutUpRhoninTitle
+		self.OptionsPanel.name = L["Title"]
 
 		-- Title of our options panel
 		local text = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLargeLeftTop")
@@ -38,12 +40,12 @@ function ShutUpRhonin:CreateOptionsFrame()
 		local _, fontHeight = text:GetFont()
 		fontHeight = math.floor(fontHeight)
 		text:SetPoint("TOPLEFT", 16, -fontHeight)
-		text:SetText(ShutUpRhoninTitle)
+		text:SetText(L["Title"])
 
 		-- Filter text yell checkbox
-		cbFilterTextYell = CreateFrame("CheckButton", nil, self.OptionsPanel, "InterfaceOptionsCheckButtonTemplate")
+		local cbFilterTextYell = CreateFrame("CheckButton", nil, self.OptionsPanel, "InterfaceOptionsCheckButtonTemplate")
 		cbFilterTextYell:SetPoint("TOPLEFT", text, 0, -fontHeight)
-		cbFilterTextYell.Text:SetText(sFilterTextYell)
+		cbFilterTextYell.Text:SetText(L["OptionYell"])
 		cbFilterTextYell:HookScript("OnClick", function(_, btn, down)
 			ShutUpRhonin.options.FilterTextYell = cbFilterTextYell:GetChecked()
 		end)
@@ -56,37 +58,38 @@ function ShutUpRhonin:CreateOptionsFrame()
 end
 
 function ShutUpRhonin:InitializeOptions()
-	cbFilterTextYell:SetChecked(self.options.FilterTextYell)
+	self.OptionsPanel.cbFilterTextYell:SetChecked(self.options.FilterTextYell)
 end
 
 function ShutUpRhonin:VariablesLoaded()
 	ShutUpRhonin.options = ShutUpRhoninSettings.options or defaultOptions
-	ShutUpRhonin:InitializeOptions()
 end
 
-function ShutUpRhonin:OnEvent(event, addonName, isLogin, isReload)
-	if event == "VARIABLES_LOADED" then
-		-- Load our variables
-		ShutUpRhonin:VariablesLoaded()
-	end
-	if event == "ADDON_LOADED" and addonName == ShutUpRhonin.addonName then
-		ShutUpRhonin:CreateOptionsFrame()
-		ShutUpRhonin:InitializeOptions()
+function ShutUpRhonin:OnEvent(event, ...)
+	if event == "ADDON_LOADED" then
+		local addon = ...
+		if addon == addonName then
+			-- Load our variables
+			ShutUpRhonin:VariablesLoaded()
+			ShutUpRhonin:CreateOptionsFrame()
+			ShutUpRhonin:InitializeOptions()
+		end
 		return
-	else
-	end
-	if isLogin or isReload then
-		--print("Muting Rhonin")
-        local RhoninEvent = { 559126, 559127, 559128, 559129, 559130, 559131, 559132, 559133, }
-        for _, yell in pairs(RhoninEvent) do
-            MuteSoundFile(yell)
-        end
-        ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", RhoninFilter)
+	elseif event == "PLAYER_ENTERING_WORLD" then
+		local isLogin, isReload = ...
+		if isLogin or isReload then
+			--print("Muting Rhonin")
+	        local RhoninEvent = { 559126, 559127, 559128, 559129, 559130, 559131, 559132, 559133, }
+	        for _, yell in pairs(RhoninEvent) do
+	            MuteSoundFile(yell)
+	        end
+	        ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", RhoninFilter)
+		end
+		return
 	end
 end
 
 ShutUpRhoninFrame:RegisterEvent("ADDON_LOADED")
-ShutUpRhoninFrame:RegisterEvent("VARIABLES_LOADED")
 ShutUpRhoninFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 ShutUpRhoninFrame:SetScript("OnEvent", ShutUpRhonin.OnEvent)
 
