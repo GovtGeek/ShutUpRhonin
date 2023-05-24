@@ -17,7 +17,7 @@ local ShutUpRhoninFrame = CreateFrame("Frame", "ShutUpRhoninFrame")
 
 local function RhoninFilter(self, event, msg, author, ...)
     local zone = C_Map.GetBestMapForUnit("player")
-    if zone == 125 and author == sRhonin then -- we're in Dalaran and Rhonin is yelling
+    if zone == 125 and author == sRhonin and ShutUpRhonin.options.FilterTextYell then -- we're in Dalaran and Rhonin is yelling
         return true -- filter it
     else
         return false, msg, author, ... -- let it pass
