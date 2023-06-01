@@ -70,15 +70,20 @@ function ShutUpRhonin:OnEvent(event, addonName, isLogin, isReload)
 		ShutUpRhonin:VariablesLoaded()
 		ShutUpRhonin.OptionsPanel = ShutUpRhonin:CreateOptionsFrame()
 		ShutUpRhonin:InitializeOptions()
+		ShutUpRhonin:MuteSounds()
         ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", RhoninFilter)
 		return
 	end
 	if isLogin or isReload then
 		--print("Muting Rhonin")
-        local RhoninEvent = { 559126, 559127, 559128, 559129, 559130, 559131, 559132, 559133, }
-        for _, yell in pairs(RhoninEvent) do
-            MuteSoundFile(yell)
-        end
+		ShutUpRhonin:MuteSounds()
+	end
+end
+
+function ShutUpRhonin:MuteSounds()
+	local RhoninEvent = { 559126, 559127, 559128, 559129, 559130, 559131, 559132, 559133, }
+	for _, yell in pairs(RhoninEvent) do
+		MuteSoundFile(yell)
 	end
 end
 
