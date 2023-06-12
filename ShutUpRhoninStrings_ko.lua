@@ -1,3 +1,4 @@
 if GetLocale() ~= "koKR" then return end
+local _, ShutUpRhonin = ...
+ShutUpRhonin.L = L
 L.Rhonin = "로닌"
---sRhonin = "로닌"

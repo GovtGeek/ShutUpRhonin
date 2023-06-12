@@ -64,18 +64,18 @@ local function RhoninFilter(self, event, msg, author, ...)
 	return false, msg, author, ... -- let it pass
 end
 
-function ShutUpRhonin:OnEvent(event, addonName, isLogin, isReload)
-	if event == "ADDON_LOADED" and addonName == ShutUpRhonin.addonName then
-		--print("Loaded ShutUpRhonin")
+function ShutUpRhonin:OnEvent(event, ...)
+	local addonName = ...
+	local isLogin, isReload = ...
+	if event == "ADDON_LOADED" then
+		if addonName ~= ShutUpRhonin.addonName then return end -- bail fast
 		ShutUpRhonin:VariablesLoaded()
 		ShutUpRhonin.OptionsPanel = ShutUpRhonin:CreateOptionsFrame()
 		ShutUpRhonin:InitializeOptions()
 		ShutUpRhonin:MuteSounds()
         ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", RhoninFilter)
 		return
-	end
-	if isLogin or isReload then
-		--print("Muting Rhonin")
+	elseif isLogin or isReload then
 		ShutUpRhonin:MuteSounds()
 	end
 end
