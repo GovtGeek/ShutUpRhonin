@@ -5,7 +5,7 @@
 ## Notes: Silences Rhonin's Algalon RP in Dalaran (sound + text)
 ## SavedVariables: ShutUpRhoninSettings
 ## X-Contributor: Road-block
-
+ShutUpRhonin.lua
 ShutUpRhoninStrings.lua
 ShutUpRhoninStrings_cn.lua
 ShutUpRhoninStrings_ko.lua
