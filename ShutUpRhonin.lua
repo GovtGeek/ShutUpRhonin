@@ -57,7 +57,7 @@ end
 local function RhoninFilter(self, event, msg, author, ...)
 	if ShutUpRhonin.options.FilterYellText then
 		local zone = C_Map.GetBestMapForUnit("player")
-		if zone == 125 and author == L.Rhonin then -- we're in Dalaran and Rhonin is yelling
+		if (zone == 125 or zone == 126) and author == L.Rhonin then -- we're in Dalaran and Rhonin is yelling
 			return true -- filter it
 		end
 	end
