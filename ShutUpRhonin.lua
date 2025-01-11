@@ -85,6 +85,10 @@ function ShutUpRhonin:MuteSounds()
 	for _, yell in pairs(RhoninEvent) do
 		MuteSoundFile(yell)
 	end
+	local KalecgosEvent = { 552973, 552998, 552962, 552999, 552979, 553004, 553012, 552968, 552992, }
+	for _, yell in pairs(KalecgosEvent) do
+		MuteSoundFile(yell)
+	end
 end
 
 ShutUpRhoninFrame:RegisterEvent("ADDON_LOADED")
