@@ -1,5 +1,5 @@
-## Interface: 30403
-## Version: 3.4.3.1
+## Interface: 40402, 40401
+## Version: 4.4.2.1
 ## Title: ShutUp Rhonin
 ## Author: GovtGeek
 ## Notes: Silences Rhonin's Algalon RP in Dalaran (sound + text)
