@@ -18,36 +18,15 @@ local ShutUpRhoninFrame = CreateFrame("Frame", "ShutUpRhoninFrame")
 
 -- The interface options panel
 function ShutUpRhonin:CreateOptionsFrame()
-	if not self.OptionsPanel then
-		local panel = CreateFrame("Frame", "ShutUpRhoninOptionsFrame", nil, BackdropTemplateMixin and "BackdropTemplate")
-		self.OptionsPanel = panel
-		self.OptionsPanel.name = L.ShutUpRhoninTitle
 
-		-- Title of our options panel
-		local text = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLargeLeftTop")
-		text:SetSize(290, 0)
-		text:SetJustifyV("MIDDLE")
-		local _, fontHeight = text:GetFont()
-		fontHeight = math.floor(fontHeight)
-		text:SetPoint("TOPLEFT", 16, -fontHeight)
-		text:SetText(ShutUpRhoninTitle)
+	local category, layout = Settings.RegisterVerticalLayoutCategory(L.ShutUpRhoninTitle)
 
-		-- Filter text yell checkbox
-		cbFilterYellText = CreateFrame("CheckButton", nil, self.OptionsPanel, "InterfaceOptionsCheckButtonTemplate")
-		cbFilterYellText:SetPoint("TOPLEFT", text, 0, -fontHeight)
-		cbFilterYellText.Text:SetText(L.FilterYellText)
-		cbFilterYellText:HookScript("OnClick", function(_, btn, down)
-			self.options.FilterYellText = cbFilterYellText:GetChecked()
-		end)
-		self.OptionsPanel.cbFilterYellText = cbFilterYellText
-	end
-	-- Add the panel to the interface options
-	InterfaceOptions_AddCategory(self.OptionsPanel)
-	return self.OptionsPanel
-end
-
-function ShutUpRhonin:InitializeOptions()
-	self.OptionsPanel.cbFilterYellText:SetChecked(self.options.FilterYellText)
+	local yellSetting = Settings.RegisterProxySetting(category, "FilterYellCheckbox", Settings.VarType.Boolean, L.FilterYellText, true,
+		function () return ShutUpRhoninSettings.options.FilterYellText end,
+		function (value) ShutUpRhoninSettings.options.FilterYellText = value end)
+	Settings.CreateCheckbox(category, yellSetting)
+	Settings.RegisterAddOnCategory(category)
+	return nil
 end
 
 function ShutUpRhonin:VariablesLoaded()
@@ -69,11 +48,9 @@ function ShutUpRhonin:OnEvent(event, ...)
 	local isLogin, isReload = ...
 	if event == "ADDON_LOADED" then
 		if addonName ~= ShutUpRhonin.addonName then return end -- bail fast
-		ShutUpRhonin:VariablesLoaded()
-		ShutUpRhonin.OptionsPanel = ShutUpRhonin:CreateOptionsFrame()
-		ShutUpRhonin:InitializeOptions()
-		ShutUpRhonin:MuteSounds()
-        ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", RhoninFilter)
+			ShutUpRhonin:VariablesLoaded()
+			ShutUpRhonin:MuteSounds()
+        	ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", RhoninFilter)
 		return
 	elseif isLogin or isReload then
 		ShutUpRhonin:MuteSounds()
@@ -97,7 +74,5 @@ ShutUpRhoninFrame:SetScript("OnEvent", ShutUpRhonin.OnEvent)
 
 SLASH_SHUTUPRHONIN1 = "/shutuprhonin"
 SlashCmdList.SHUTUPRHONIN = function(msg, editBox)
-	-- Call it twice because of a Blizzard bug
-	InterfaceOptionsFrame_OpenToCategory(ShutUpRhonin.OptionsPanel)
-	InterfaceOptionsFrame_OpenToCategory(ShutUpRhonin.OptionsPanel)
+	Settins.OpenToCategory(L.ShutUpRhoninTitle)
 end
